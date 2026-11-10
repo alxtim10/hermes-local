@@ -1,13 +1,12 @@
 # Financial Agent Tools
 
-Modular Financial MCP Infrastructure for Hermes Agent — providing stock analysis, cryptocurrency tracking, and cash flow management through the Model Context Protocol.
+Modular Financial MCP Infrastructure for Hermes Agent — providing stock analysis and cryptocurrency tracking through the Model Context Protocol.
 
 ## Quick Start
 
 ### 1. Prerequisites
 
 - Python 3.11+
-- Docker & Docker Compose (for PostgreSQL)
 - Ollama with Hermes 3 model (for agent interaction)
 
 ### 2. Setup
@@ -27,33 +26,15 @@ pip install -e ".[dev]"
 cp .env.example .env
 ```
 
-### 3. Start PostgreSQL
-
-```bash
-docker compose up -d
-```
-
-Wait for the health check to pass:
-
-```bash
-docker compose ps   # STATUS should show "healthy"
-```
-
-### 4. Run Database Migrations
-
-```bash
-alembic upgrade head
-```
-
-### 5. Verify MCP Tools
+### 3. Verify MCP Tools
 
 ```bash
 python scripts/check_mcp.py
 ```
 
-You should see all 11 tools registered across three domains.
+You should see all 6 tools registered across two domains.
 
-### 6. Start the MCP Server
+### 4. Start the MCP Server
 
 ```bash
 python -m financial_tools.server
@@ -73,11 +54,6 @@ The server starts on stdio transport, ready for Hermes integration.
 | 4 | Crypto | `get_crypto_quote` | Current crypto price (BTC, ETH, SOL, etc.) |
 | 5 | Crypto | `get_crypto_history` | Historical price series |
 | 6 | Crypto | `analyze_crypto` | Returns, volatility, and moving averages |
-| 7 | Cash Flow | `record_transaction` | Record income or expense with idempotency support |
-| 8 | Cash Flow | `list_transactions` | Paginated, filtered transaction listing |
-| 9 | Cash Flow | `get_cashflow_report` | Full income/expense/net statement with category breakdowns |
-| 10 | Cash Flow | `get_expense_breakdown` | Category-wise expense percentages |
-| 11 | Cash Flow | `get_monthly_summary` | Monthly totals with month-over-month comparison |
 
 ---
 
@@ -91,18 +67,14 @@ financial-agent-tools/
 │   ├── dependencies.py     # Composition root
 │   ├── stocks/             # Stock analysis domain
 │   ├── crypto/             # Cryptocurrency domain
-│   ├── cashflow/           # Cash flow management domain
-│   ├── shared/             # Database, logging, exceptions, security
-│   └── migrations/         # Alembic migrations
+│   └── shared/             # Logging, exceptions, security, http client
 ├── tests/
 │   ├── unit/               # Deterministic unit tests
-│   └── conftest.py         # Fixtures (in-memory SQLite)
+│   └── conftest.py         # Fixtures (mock providers)
 ├── scripts/
 │   └── check_mcp.py        # Tool discovery inspector
 ├── docs/                   # Architecture and reference docs
-├── compose.yaml            # PostgreSQL container
 ├── pyproject.toml          # Python project metadata
-├── alembic.ini             # Migration configuration
 └── .env.example            # Environment template
 ```
 
@@ -118,7 +90,7 @@ PYTHONPATH=src pytest tests/unit/ -v
 PYTHONPATH=src pytest tests/unit/test_stocks.py -v
 ```
 
-Tests use mock providers and in-memory SQLite — no external APIs or PostgreSQL required.
+Tests use mock providers — no external APIs required.
 
 ---
 
